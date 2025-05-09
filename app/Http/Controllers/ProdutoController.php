@@ -10,7 +10,7 @@ class ProdutoController extends Controller
     public function index()
     {
         $produtos = Produto::all();
-        return view('produtos', compact('produtos'));
+        return view('Relatorioproduto', compact('produtos'));
     }
 
     public function create()
@@ -30,15 +30,19 @@ class ProdutoController extends Controller
             'status' => 'required|in:ativo,inativo',
         ]);
 
-        $produto = new Produto();
-        $produto->codigo_interno = uniqid('PROD-');
-        $produto->nome = $request->nome;
-        $produto->descricao = $request->descricao;
-        $produto->quantidade = $request->quantidade;
-        $produto->local_armazenamento = $request->local_armazenamento;
-        $produto->lote = $request->lote;
-        $produto->validade = $request->validade;
-        $produto->status = $request->status;
+        // Cria o produto sem o código interno
+        $produto = Produto::create([
+            'nome' => $request->nome,
+            'descricao' => $request->descricao,
+            'quantidade' => $request->quantidade,
+            'local_armazenamento' => $request->local_armazenamento,
+            'lote' => $request->lote,
+            'validade' => $request->validade,
+            'status' => $request->status,
+        ]);
+
+        // Gera e atualiza o código interno com base no ID gerado
+        $produto->codigo_interno = 'PROD-' . str_pad($produto->id, 5, '0', STR_PAD_LEFT);
         $produto->save();
 
         return redirect()->route('produtos.index')->with('success', 'Produto cadastrado com sucesso!');

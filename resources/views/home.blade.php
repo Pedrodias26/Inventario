@@ -2,8 +2,10 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Início - Gerenciamento de Estoque</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         body {
             background-color: #f0f2f5;
@@ -53,7 +55,8 @@
         <a href="{{ route('produtos.create') }}" class="btn btn-success">Cadastrar Produto</a>
         <a href="{{ route('produtos.index') }}" class="btn btn-primary">Relatório de Produtos</a>
         <a href="#" class="btn btn-warning">Criar Inventário</a>
-        <a href="#" class="btn btn-info">Relatórios</a>
+        <a href="#" class="btn btn-info" class="fa fa-file-excel-o">Relatórios</a>
+        <button href="{{ route('GerenciamentoUsuario') }}" type="submit" class="btn btn-danger ">Gerenciamento de usuario <i class="fa fa-child"></i></button>
     </div>
 
     <form action="{{ route('logout') }}" method="POST" class="logout">

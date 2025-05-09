@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Login - Estoque</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <style>
         * {
             box-sizing: border-box;
@@ -10,7 +12,8 @@
 
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
+            background: url('{{ asset("images/bg-login.jpg") }}') no-repeat center center fixed;
+            background-size: cover;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -19,10 +22,10 @@
         }
 
         .container {
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.95);
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             width: 350px;
         }
 
@@ -90,11 +93,13 @@
         </div>
     @endif
 
-    <form method="POST" action="/login">
+    <form method="POST" action="{{ route('login') }}">
         @csrf
         <input type="email" name="email" placeholder="E-mail" required>
         <input type="password" name="password" placeholder="Senha" required>
-        <button type="submit">Entrar</button>
+        <button type="submit" style="font-size:18px">
+            Entrar <i class="fa fa-user-circle-o"></i>
+        </button>
     </form>
 
     <div class="link">

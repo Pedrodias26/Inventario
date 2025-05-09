@@ -3,12 +3,13 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\ItemInventarioController;
+
 
 Route::get('/', function () {
-    return redirect()->route('login'); // Redireciona para a tela de login
+    return redirect()->route('login'); 
 });
 
-// Login / Registro
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -17,7 +18,6 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Área protegida (após login)
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', function () {
         return view('home');
@@ -27,4 +27,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/produtos/create', [ProdutoController::class, 'create'])->name('produtos.create');
     Route::post('/produtos', [ProdutoController::class, 'store'])->name('produtos.store');
     Route::post('/GerenciamentoUsuario', [ProdutoController::class, 'store'])->name('GerenciamentoUsuario');
-});Route::post('/RelatorioProduto', [ProdutoController::class, 'store'])->name('RelatorioProduto');
+    Route::post('/RelatorioProduto', [ProdutoController::class, 'store'])->name('RelatorioProduto');
+    Route::resource('itens-inventario', iteminventarioController::class);
+});

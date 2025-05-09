@@ -8,6 +8,7 @@
 <body>
 <div class="container mt-5">
     <h2 class="text-center mb-4">Cadastrar Produto</h2>
+    <a href="{{ route('home') }}" class="btn btn-secondary me-1">Voltar á Pagina inicial</a>
 
     @if ($errors->any())
         <div class="alert alert-danger">

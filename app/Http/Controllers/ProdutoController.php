@@ -30,7 +30,7 @@ class ProdutoController extends Controller
             'status' => 'required|in:ativo,inativo',
         ]);
 
-        // Cria o produto sem o código interno
+    
         $produto = Produto::create([
             'nome' => $request->nome,
             'descricao' => $request->descricao,
@@ -41,8 +41,7 @@ class ProdutoController extends Controller
             'status' => $request->status,
         ]);
 
-        // Gera e atualiza o código interno com base no ID gerado
-        $produto->codigo_interno = 'PROD-' . str_pad($produto->id, 5, '0', STR_PAD_LEFT);
+        $produto->codigo_interno = str_pad($produto->id, 5, '0', STR_PAD_LEFT);
         $produto->save();
 
         return redirect()->route('produtos.index')->with('success', 'Produto cadastrado com sucesso!');

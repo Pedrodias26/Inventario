@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Início - Gerenciamento de Estoque</title>
+    <title>Página Inicial - Gerenciamento de Estoque</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <style>
         body {
             background-color: #f0f2f5;
@@ -50,19 +50,20 @@
 </head>
 <body>
 <div class="container">
-    <h2>Página Inicial</h2>
+    <h2>Bem-vindo ao Sistema</h2>
     <div class="btn-group">
-        <a href="{{ route('produtos.create') }}" class="btn btn-success">Cadastrar Produto</a>
-        <a href="{{ route('produtos.index') }}" class="btn btn-primary">Relatório de Produtos</a>
-        <a href="#" class="btn btn-warning">Criar Inventário</a>
-        <a href="#" class="btn btn-info" class="fa fa-file-excel-o">Relatórios</a>
-        <button href="{{ route('GerenciamentoUsuario') }}" type="submit" class="btn btn-danger ">Gerenciamento de usuario <i class="fa fa-child"></i></button>
+        <a href="{{ route('produtos.index') }}" class="btn btn-primary"><i class="fa fa-box"></i> Relatório de Produtos</a>
+        <a href="{{ route('inventario.index') }}" class="btn btn-success"><i class="fa fa-list"></i> Inventários</a>
+        <a href="{{ route('inventario.create') }}" class="btn btn-warning"><i class="fa fa-plus"></i> Criar Inventário</a>
+        <a href="{{ route('GerenciamentoUsuario') }}" class="btn btn-info"><i class="fa fa-users"></i> Gerenciamento de Usuário</a>
     </div>
 
     <form action="{{ route('logout') }}" method="POST" class="logout">
         @csrf
-        <button type="submit" class="btn btn-danger w-100">Sair</button>
+        <button type="submit" class="btn btn-danger w-100"><i class="fa fa-sign-out"></i> Sair</button>
     </form>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

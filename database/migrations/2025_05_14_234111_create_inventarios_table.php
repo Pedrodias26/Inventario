@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('inventarios', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pessoa_id')->constrained('pessoas');
-            $table->date('data');
+            $table->string('local');
+            $table->enum('status', ['em_contagem', 'finalizado'])->default('em_contagem');
             $table->timestamps();
         });
     }

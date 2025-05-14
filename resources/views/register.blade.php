@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <title>Cadastro - Estoque</title>
@@ -78,30 +79,36 @@
         }
     </style>
 </head>
-<body>
-<div class="container">
-    <h2>Cadastrar Usuário</h2>
 
-    @if ($errors->any())
+<body>
+    <div class="container">
+        <h2>Cadastrar Usuário</h2>
+
+        @if ($errors->any())
         <div class="error">
             @foreach ($errors->all() as $error)
-                <p>{{ $error }}</p>
+            <p>{{ $error }}</p>
             @endforeach
         </div>
-    @endif
+        @endif
 
-    <form method="POST" action="/register">
-        @csrf
-        <input type="text" name="name" placeholder="Nome" required>
-        <input type="email" name="email" placeholder="E-mail" required>
-        <input type="password" name="password" placeholder="Senha" required>
-        <input type="password" name="password_confirmation" placeholder="Confirmar Senha" required>
-        <button type="submit">Cadastrar</button>
-    </form>
+        <form method="POST" action="/register">
+            @csrf
+            <input type="text" name="name" placeholder="Nome" required>
+            <input type="email" name="email" placeholder="E-mail" required>
+            <input type="password" name="password" placeholder="Senha" required>
+            <input type="password" name="password_confirmation" placeholder="Confirmar Senha" required>
+            <button type="submit">Cadastrar</button>
+            <button class="btn btn-primary">
+                <span class="spinner-border spinner-border-sm"></span>
+                Loading..
+            </button>
+        </form>
 
-    <div class="link">
-        <p>Já tem conta? <a href="{{ route('login') }}">Entrar</a></p>
+        <div class="link">
+            <p>Já tem conta? <a href="{{ route('login') }}">Entrar</a></p>
+        </div>
     </div>
-</div>
 </body>
+
 </html>

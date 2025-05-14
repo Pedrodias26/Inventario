@@ -15,8 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('inventario_id')->constrained('inventarios')->onDelete('cascade');
             $table->foreignId('produto_id')->constrained('produtos');
-            $table->integer('quantidade_registrada');
             $table->integer('quantidade_contada');
+            $table->integer('diferenca')->nullable();
+            $table->string('local_contagem');
+            $table->date('validade')->nullable();
+            $table->enum('status', ['pendente', 'contado'])->default('pendente');
             $table->timestamps();
         });
     }

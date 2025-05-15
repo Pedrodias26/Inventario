@@ -9,11 +9,23 @@
 <div class="container mt-5">
     <h2>Inventário #{{ $inventario->id }}</h2>
     <p><strong>Local:</strong> {{ $inventario->local }}</p>
+    <p><strong>Status:</strong> {{ ucfirst($inventario->status) }}</p>
+
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
     <a href="{{ route('itens-inventario.create', $inventario->id) }}" class="btn btn-success mb-3">Contar Produto</a>
 
+    @if($inventario->itens->where('status', 'contado')->count() > 0 && $inventario->status == 'em_contagem')
+        <form action="{{ route('inventario.lancar', $inventario->id) }}" method="POST" class="mb-3">
+            @csrf
+            <button type="submit" class="btn btn-primary">Lançar Inventário</button>
+        </form>
+    @endif
+
     <table class="table table-bordered table-striped">
-        <thead>
+        <thead class="table-dark">
             <tr>
                 <th>Código</th>
                 <th>Descrição</th>
@@ -24,7 +36,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($inventario->itens as $item)
+            @forelse($inventario->itens as $item)
                 <tr>
                     <td>{{ $item->produto->codigo_interno }}</td>
                     <td>{{ $item->produto->nome }}</td>
@@ -33,7 +45,11 @@
                     <td>{{ $item->validade }}</td>
                     <td>{{ ucfirst($item->status) }}</td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="6" class="text-center">Nenhum item contado ainda.</td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

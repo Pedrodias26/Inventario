@@ -12,7 +12,12 @@
         @csrf
         <div class="mb-3">
             <label>Local da Contagem</label>
-            <input type="text" name="local" class="form-control" required>
+            <select name="local" class="form-select" required>
+                <option value="">Selecione o Local</option>
+                @foreach($locais as $local)
+                    <option value="{{ $local }}">{{ $local }}</option>
+                @endforeach
+            </select>
         </div>
         <button class="btn btn-success">Criar Inventário</button>
     </form>

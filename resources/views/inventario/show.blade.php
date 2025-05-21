@@ -28,6 +28,7 @@
         <thead class="table-dark">
             <tr>
                 <th>Código</th>
+                <th>EAN</th>
                 <th>Descrição</th>
                 <th>Contada</th>
                 <th>Diferença</th>
@@ -39,6 +40,7 @@
             @forelse($inventario->itens as $item)
                 <tr>
                     <td>{{ $item->produto->codigo_interno }}</td>
+                    <td>{{ $item->produto->EAN }}</td>
                     <td>{{ $item->produto->nome }}</td>
                     <td>{{ $item->quantidade_contada }}</td>
                     <td>{{ $item->diferenca }}</td>

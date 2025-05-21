@@ -18,5 +18,6 @@ class Produto extends Model
         'lote',
         'validade',
         'status',
+        'EAN',
     ];
 }

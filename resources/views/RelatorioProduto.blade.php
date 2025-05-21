@@ -28,6 +28,7 @@
             <thead class="table-dark text-center">
             <tr>
                 <th>Código</th>
+                <th>EAN</th>
                 <th>Nome</th>
                 <th>Descrição</th>
                 <th>Quantidade</th>
@@ -41,6 +42,7 @@
             @foreach($produtos as $produto)
                 <tr>
                     <td>{{ $produto->codigo_interno }}</td>
+                    <td>{{ $produto->EAN }}</td>
                     <td>{{ $produto->nome }}</td>
                     <td>{{ $produto->descricao }}</td>
                     <td>{{ $produto->quantidade }}</td>

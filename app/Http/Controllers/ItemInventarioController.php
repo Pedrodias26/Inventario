@@ -17,18 +17,19 @@ class ItemInventarioController extends Controller
     public function store(Request $request, Inventario $inventario)
     {
         $request->validate([
-            'codigo_interno' => 'required|string',
+            'EAN' => 'required|string',
             'quantidade_contada' => 'required|integer',
             'validade' => 'nullable|date',
         ]);
 
-        $produto = Produto::where('codigo_interno', $request->codigo_interno)->firstOrFail();
+        $produto = Produto::where('EAN', $request->EAN)->firstOrFail();
 
         $diferenca = $request->quantidade_contada - $produto->quantidade;
 
         ItemInventario::create([
             'inventario_id' => $inventario->id,
             'produto_id' => $produto->id,
+            'EAN' => $produto->EAN,
             'quantidade_contada' => $request->quantidade_contada,
             'diferenca' => $diferenca,
             'local_contagem' => $inventario->local,

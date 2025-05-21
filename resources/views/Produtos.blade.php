@@ -73,6 +73,7 @@
             <thead>
                 <tr>
                     <th>Código</th>
+                    <th>EAN</th>
                     <th>Nome</th>
                     <th>Descrição</th>
                     <th>Quantidade</th>
@@ -86,6 +87,7 @@
                 @forelse($produtos as $produto)
                     <tr>
                         <td>{{ $produto->codigo_interno }}</td>
+                        <td>{{ $produto->EAN }}</td>
                         <td>{{ $produto->nome }}</td>
                         <td>{{ $produto->descricao }}</td>
                         <td>{{ $produto->quantidade }}</td>

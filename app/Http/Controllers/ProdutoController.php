@@ -22,6 +22,7 @@ class ProdutoController extends Controller
     {
         $request->validate([
             'nome' => 'required|string|max:255',
+            'EAN' => 'required|integer',
             'descricao' => 'nullable|string',
             'quantidade' => 'required|integer',
             'local_armazenamento' => 'nullable|string',
@@ -33,6 +34,7 @@ class ProdutoController extends Controller
     
         $produto = Produto::create([
             'nome' => $request->nome,
+            'EAN' => $request->EAN,
             'descricao' => $request->descricao,
             'quantidade' => $request->quantidade,
             'local_armazenamento' => $request->local_armazenamento,

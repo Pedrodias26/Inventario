@@ -2,68 +2,150 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <title>Dashboard - Gerenciamento de Estoque</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Página Inicial - Gerenciamento de Estoque</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            background-color: #f0f2f5;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
+            padding: 0;
         }
-
-        .container {
-            background-color: #fff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            width: 400px;
-            text-align: center;
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            padding-top: 20px;
+            position: fixed;
+            width: 220px;
+            color: white;
         }
-
-        h2 {
-            margin-bottom: 30px;
-            color: #333;
+        .sidebar a {
+            color: white;
+            display: block;
+            padding: 12px 20px;
+            text-decoration: none;
         }
-
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        .sidebar a:hover {
+            background-color: #495057;
         }
-
-        .btn {
-            padding: 12px;
+        .content {
+            margin-left: 220px;
+            padding: 30px;
+        }
+        .card {
+            border-left: 4px solid #198754;
+        }
+        .card h5 {
+            font-size: 20px;
+        }
+        .card p {
             font-size: 16px;
-            border-radius: 8px;
         }
-
-        .logout {
-            margin-top: 25px;
+        .btn-logout {
+            width: 100%;
+            margin-top: 20px;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h2>Bem-vindo ao Sistema</h2>
-    <div class="btn-group">
-        <a href="{{ route('produtos.index') }}" class="btn btn-primary"><i class="fa fa-box"></i> Relatório de Produtos</a>
-        <a href="{{ route('inventario.index') }}" class="btn btn-success"><i class="fa fa-list"></i> Inventários</a>
-        <a href="{{ route('inventario.create') }}" class="btn btn-warning"><i class="fa fa-plus"></i> Criar Inventário</a>
-        <a href="{{ route('GerenciamentoUsuario') }}" class="btn btn-info"><i class="fa fa-users"></i> Gerenciamento de Usuário</a>
-    </div>
-
-    <form action="{{ route('logout') }}" method="POST" class="logout">
+<div class="sidebar">
+    <h4 class="text-center">Menu</h4>
+    <a href="{{ route('home') }}">Dashboard</a>
+    <a href="{{ route('produtos.index') }}">Relatorio de Produtos</a>
+    <a href="{{ route('inventario.index') }}">Inventario</a>
+    <a href="{{ route('inventario.create') }}">Criar Inventario</a>
+    <a href="{{ route('GerenciamentoUsuario') }}">Usuarios</a>
+    <form action="{{ route('logout') }}" method="POST" class="mt-4 px-3">
         @csrf
-        <button type="submit" class="btn btn-danger w-100"><i class="fa fa-sign-out"></i> Sair</button>
+        <button type="submit" class="btn btn-danger btn-logout">Sair</button>
     </form>
 </div>
 
+<div class="content">
+    <h2 class="mb-4">Dashboard de Inventario</h2>
+
+    <form method="GET" action="{{ route('home') }}" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <label>Data Inicial</label>
+            <input type="date" name="start_date" class="form-control" value="{{ request('start_date') }}">
+        </div>
+        <div class="col-md-3">
+            <label>Data Final</label>
+            <input type="date" name="end_date" class="form-control" value="{{ request('end_date') }}">
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow p-3">
+                <h5>Inventario Criados</h5>
+                <p><strong>{{ $inventariosCriados }}</strong></p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow p-3">
+                <h5>Em Contagem</h5>
+                <p><strong>{{ $emContagem }}</strong></p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow p-3">
+                <h5>Finalizados</h5>
+                <p><strong>{{ $finalizados }}</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <h5>Grafico de Diferença de Quantidade</h5>
+        <canvas id="graficoQuantidade"></canvas>
+    </div>
+
+    <div class="chart-container">
+        <h5>Grafico de Diferença de Valor</h5>
+        <canvas id="graficoValor"></canvas>
+    </div>
+
+    <div class="text-muted">
+        Atualizado em: {{ now()->format('d/m/Y H:i') }}
+    </div>
+</div>
+
+<script>
+    const graficoQuantidade = new Chart(document.getElementById('graficoQuantidade'), {
+        type: 'bar',
+        data: {
+            labels: {!! json_encode($labels) !!},
+            datasets: [{
+                label: 'Diferença de Quantidade',
+                data: {!! json_encode($quantidades) !!},
+                backgroundColor: 'rgba(75, 192, 192, 0.6)'
+            }]
+        }
+    });
+
+    const graficoValor = new Chart(document.getElementById('graficoValor'), {
+        type: 'bar',
+        data: {
+            labels: {!! json_encode($labels) !!},
+            datasets: [{
+                label: 'Diferença de Valor (R$)',
+                data: {!! json_encode($valores) !!},
+                backgroundColor: 'rgba(255, 99, 132, 0.6)'
+            }]
+        }
+    });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

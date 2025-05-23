@@ -15,7 +15,8 @@ class ItemInventario extends Model
         'diferenca',
         'local_contagem',
         'validade',
-        'status'
+        'status',
+        'valor_unitario'
     ];
 
     public function produto()

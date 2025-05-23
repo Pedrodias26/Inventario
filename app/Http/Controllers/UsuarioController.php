@@ -21,15 +21,17 @@ class UsuarioController extends Controller
 
     public function update(Request $request, $id)
     {
+        $usuario = User::findOrFail($id);
+
         $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
             'role' => 'required|in:admin,usuario',
         ]);
 
-        $usuario = User::findOrFail($id);
-        $usuario->role = $request->role;
-        $usuario->save();
+        $usuario->update($request->all());
 
-        return redirect()->route('usuarios.index')->with('success', 'Permissão atualizada com sucesso.');
+        return redirect()->route('GerenciamentoUsuario')->with('success', 'Usuário atualizado com sucesso.');
     }
 
     public function destroy($id)
@@ -37,6 +39,6 @@ class UsuarioController extends Controller
         $usuario = User::findOrFail($id);
         $usuario->delete();
 
-        return redirect()->route('usuarios.index')->with('success', 'Usuário excluído com sucesso.');
+        return redirect()->route('GerenciamentoUsuario')->with('success', 'Usuário excluído com sucesso.');
     }
 }

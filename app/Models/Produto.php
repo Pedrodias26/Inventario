@@ -19,5 +19,6 @@ class Produto extends Model
         'validade',
         'status',
         'EAN',
+        'valor_unitario',
     ];
 }

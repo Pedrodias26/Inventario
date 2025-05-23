@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <title>Lista de Produtos</title>
@@ -14,9 +15,9 @@
             background: white;
             border-radius: 8px;
             padding: 30px;
-            max-width: 900px;
+            max-width: 1000px;
             margin: auto;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
 
         h2 {
@@ -30,7 +31,8 @@
             margin-top: 20px;
         }
 
-        table th, table td {
+        table th,
+        table td {
             padding: 12px;
             border: 1px solid #ccc;
             text-align: center;
@@ -59,12 +61,13 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Lista de Produtos</h2>
 
         @if(session('success'))
-            <div class="success">{{ session('success') }}</div>
+        <div class="success">{{ session('success') }}</div>
         @endif
 
         <a href="{{ route('produtos.create') }}" class="btn">Cadastrar Novo Produto</a>
@@ -77,6 +80,7 @@
                     <th>Nome</th>
                     <th>Descrição</th>
                     <th>Quantidade</th>
+                    <th>Valor Unitário</th>
                     <th>Status</th>
                     <th>Validade</th>
                     <th>Lote</th>
@@ -85,24 +89,26 @@
             </thead>
             <tbody>
                 @forelse($produtos as $produto)
-                    <tr>
-                        <td>{{ $produto->codigo_interno }}</td>
-                        <td>{{ $produto->EAN }}</td>
-                        <td>{{ $produto->nome }}</td>
-                        <td>{{ $produto->descricao }}</td>
-                        <td>{{ $produto->quantidade }}</td>
-                        <td>{{ ucfirst($produto->status) }}</td>
-                        <td>{{ $produto->validade }}</td>
-                        <td>{{ $produto->lote }}</td>
-                        <td>{{ $produto->local_armazenamento }}</td>
-                    </tr>
+                <tr>
+                    <td>{{ $produto->codigo_interno }}</td>
+                    <td>{{ $produto->EAN }}</td>
+                    <td>{{ $produto->nome }}</td>
+                    <td>{{ $produto->descricao }}</td>
+                    <td>{{ $produto->quantidade }}</td>
+                    <td>R$ {{ number_format($produto->valor_unitario, 2, ',', '.') }}</td>
+                    <td>{{ ucfirst($produto->status) }}</td>
+                    <td>{{ $produto->validade }}</td>
+                    <td>{{ $produto->lote }}</td>
+                    <td>{{ $produto->local_armazenamento }}</td>
+                </tr>
                 @empty
-                    <tr>
-                        <td colspan="8">Nenhum produto cadastrado.</td>
-                    </tr>
+                <tr>
+                    <td colspan="10">Nenhum produto cadastrado.</td>
+                </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 </body>
+
 </html>

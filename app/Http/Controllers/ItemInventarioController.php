@@ -35,6 +35,7 @@ class ItemInventarioController extends Controller
             'local_contagem' => $inventario->local,
             'validade' => $request->validade,
             'status' => 'contado',
+            'valor_unitario' => $produto->valor_unitario, // CORRIGIDO AQUI
         ]);
 
         return redirect()->route('inventario.show', $inventario->id)->with('success', 'Contagem registrada.');

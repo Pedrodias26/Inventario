@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Relatório de Produtos</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-</head>
-<body>
-<div class="container mt-5">
+@extends('layouts.app')
+
+@section('title', 'Relatório de Produtos')
+
+@section('content')
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-primary">
             <i class="bi bi-box-seam"></i> Relatório de Produtos
@@ -27,8 +21,20 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    <!-- Estilo local para diminuir a fonte da tabela e evitar quebra de linha -->
+    <style>
+        .table-sm th, .table-sm td {
+            font-size: 0.80rem;
+            padding: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px; /* ajuste conforme necessário */
+        }
+    </style>
+
     <div class="table-responsive">
-        <table class="table table-bordered table-striped table-hover align-middle text-center">
+        <table class="table table-bordered table-striped table-hover align-middle text-center table-sm">
             <thead class="table-dark">
                 <tr>
                     <th>Código</th>
@@ -75,8 +81,4 @@
             </tbody>
         </table>
     </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+@endsection

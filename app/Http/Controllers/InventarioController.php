@@ -8,10 +8,21 @@ use Illuminate\Http\Request;
 
 class InventarioController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $inventarios = Inventario::with('itens.produto')->get();
-        return view('inventario.index', compact('inventarios'));
+        $query = Inventario::with('itens.produto');
+
+        // Filtro por local
+        if ($request->filled('local')) {
+            $query->where('local', 'like', '%' . $request->local . '%');
+        }
+
+        $inventarios = $query->orderBy('id', 'desc')->get();
+
+        // Locais únicos (para sugestões futuras)
+        $locais = Inventario::select('local')->distinct()->pluck('local');
+
+        return view('inventario.index', compact('inventarios', 'locais'));
     }
 
     public function create()

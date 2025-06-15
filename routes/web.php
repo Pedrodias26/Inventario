@@ -7,6 +7,7 @@ use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ItemInventarioController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\HomeController;
+use App\Models\Produto;
 
 // Rotas públicas
 Route::get('/', fn() => redirect()->route('login'));
@@ -59,4 +60,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/usuarios/{id}/edit', [UsuarioController::class, 'edit'])->name('usuarios.edit');
     Route::put('/usuarios/{id}', [UsuarioController::class, 'update'])->name('usuarios.update');
     Route::delete('/usuarios/{id}', [UsuarioController::class, 'destroy'])->name('usuarios.destroy');
+    Route::get('/produtos/buscar-por-ean/{ean}', function ($ean) {
+        $produto = Produto::where('EAN', $ean)->first();
+
+        if (!$produto) {
+            return response()->json(['descricao' => null], 404);
+        }
+
+        return response()->json(['descricao' => $produto->descricao]);
+    });
 });

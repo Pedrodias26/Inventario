@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Detalhes do Inventário</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-<div class="container mt-5">
+@extends('layouts.app')
+
+@section('title', 'Detalhes do Inventário')
+
+@section('content')
     <h2>Inventário #{{ $inventario->id }}</h2>
     <p><strong>Local:</strong> {{ $inventario->local }}</p>
     <p><strong>Status:</strong> {{ ucfirst($inventario->status) }}</p>
@@ -24,13 +20,21 @@
         </form>
     @endif
 
+    <style>
+        .table-sm th, .table-sm td {
+            font-size: 0.85rem;
+            padding: 8px;
+        }
+    </style>
+
     <div class="table-responsive">
-        <table class="table table-bordered table-striped text-center align-middle">
+        <table class="table table-bordered table-striped text-center align-middle table-sm">
             <thead class="table-dark">
                 <tr>
                     <th>Código</th>
                     <th>EAN</th>
                     <th>Descrição</th>
+                    <th>Posição</th>
                     <th>Contada</th>
                     <th>Diferença</th>
                     <th>Validade</th>
@@ -45,6 +49,7 @@
                         <td>{{ $item->produto->codigo_interno }}</td>
                         <td>{{ $item->produto->EAN }}</td>
                         <td>{{ $item->produto->nome }}</td>
+                        <td>{{ $item->produto->local_armazenamento }}</td>
                         <td>{{ $item->quantidade_contada }}</td>
                         <td>{{ $item->diferenca }}</td>
                         <td>{{ $item->validade }}</td>
@@ -56,12 +61,10 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" class="text-center">Nenhum item contado ainda.</td>
+                        <td colspan="10" class="text-center">Nenhum item contado ainda.</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
-</div>
-</body>
-</html>
+@endsection

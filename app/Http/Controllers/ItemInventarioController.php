@@ -19,25 +19,39 @@ class ItemInventarioController extends Controller
         $request->validate([
             'EAN' => 'required|string',
             'quantidade_contada' => 'required|integer',
+            'quantidade_esperada' => 'nullable|integer',
             'validade' => 'nullable|date',
+            'justificativa' => 'nullable|string|max:1000',
         ]);
 
         $produto = Produto::where('EAN', $request->EAN)->firstOrFail();
 
-        $diferenca = $request->quantidade_contada - $produto->quantidade;
+        // Quantidade esperada baseada no produto real
+        $quantidadeEsperada = $produto->quantidade;
+        $quantidadeContada = (int) $request->quantidade_contada;
+        $diferenca = $quantidadeContada - $quantidadeEsperada;
+
+        // Se houver divergência e justificativa estiver vazia
+        if ($quantidadeContada !== $quantidadeEsperada && empty($request->justificativa)) {
+            return back()
+                ->withInput()
+                ->with('error', 'Justificativa obrigatória para contagem divergente.');
+        }
 
         ItemInventario::create([
             'inventario_id' => $inventario->id,
             'produto_id' => $produto->id,
-            'EAN' => $produto->EAN,
-            'quantidade_contada' => $request->quantidade_contada,
+            'quantidade_contada' => $quantidadeContada,
             'diferenca' => $diferenca,
             'local_contagem' => $inventario->local,
             'validade' => $request->validade,
             'status' => 'contado',
-            'valor_unitario' => $produto->valor_unitario, // CORRIGIDO AQUI
+            'valor_unitario' => $produto->valor_unitario,
+            'justificativa' => $request->justificativa,
         ]);
 
-        return redirect()->route('inventario.show', $inventario->id)->with('success', 'Contagem registrada.');
+        return redirect()
+            ->route('inventario.show', $inventario->id)
+            ->with('success', 'Contagem registrada com sucesso.');
     }
 }

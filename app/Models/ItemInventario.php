@@ -11,12 +11,14 @@ class ItemInventario extends Model
     protected $fillable = [
         'inventario_id',
         'produto_id',
+        'EAN',
         'quantidade_contada',
         'diferenca',
         'local_contagem',
         'validade',
         'status',
-        'valor_unitario'
+        'valor_unitario',
+        'justificativa',
     ];
 
     public function produto()

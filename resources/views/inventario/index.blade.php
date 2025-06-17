@@ -7,9 +7,11 @@
     <div>
         <h3 class="text-primary">Lista de Inventários</h3>
     </div>
+    @if(in_array(Auth::user()->role, ['admin', 'auditor']))
     <a href="{{ route('inventario.create') }}" class="btn btn-success">
         <i class="fa fa-plus-circle"></i> Novo Inventário
     </a>
+    @endif
 </div>
 
 <form method="GET" action="{{ route('inventario.index') }}" class="mb-4 row g-3 align-items-center">
@@ -66,36 +68,41 @@
                                     <i class="fa fa-eye text-primary"></i> Visualizar
                                 </a>
                             </li>
-                            <li>
-                                @if($inv->status !== 'finalizado')
-                                    <a class="dropdown-item" href="{{ route('itens-inventario.create', $inv->id) }}">
-                                        <i class="fa fa-clipboard-check text-success"></i> Contar
-                                    </a>
-                                @else
-                                    <span class="dropdown-item disabled text-muted">
-                                        <i class="fa fa-ban"></i> Contagem indisponível
-                                    </span>
+
+                            @if(in_array(Auth::user()->role, ['admin', 'auditor']))
+                                <li>
+                                    @if($inv->status !== 'finalizado')
+                                        <a class="dropdown-item" href="{{ route('itens-inventario.create', $inv->id) }}">
+                                            <i class="fa fa-clipboard-check text-success"></i> Contar
+                                        </a>
+                                    @else
+                                        <span class="dropdown-item disabled text-muted">
+                                            <i class="fa fa-ban"></i> Contagem indisponível
+                                        </span>
+                                    @endif
+                                </li>
+
+                                @if($inv->status === 'em_contagem')
+                                <li>
+                                    <form action="{{ route('inventario.lancar', $inv->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="fa fa-check-circle text-warning"></i> Lançar
+                                        </button>
+                                    </form>
+                                </li>
                                 @endif
-                            </li>
-                            @if($inv->status === 'em_contagem')
-                            <li>
-                                <form action="{{ route('inventario.lancar', $inv->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <i class="fa fa-check-circle text-warning"></i> Lançar
-                                    </button>
-                                </form>
-                            </li>
+
+                                <li>
+                                    <form action="{{ route('inventario.destroy', $inv->id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este inventário?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="fa fa-trash"></i> Excluir
+                                        </button>
+                                    </form>
+                                </li>
                             @endif
-                            <li>
-                                <form action="{{ route('inventario.destroy', $inv->id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este inventário?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="dropdown-item text-danger">
-                                        <i class="fa fa-trash"></i> Excluir
-                                    </button>
-                                </form>
-                            </li>
                         </ul>
                     </div>
                 </td>

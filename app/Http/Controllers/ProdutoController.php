@@ -80,6 +80,18 @@ class ProdutoController extends Controller
     public function destroy($id)
     {
         $produto = Produto::findOrFail($id);
+
+        // Verifica se há vínculos com itens de inventário
+        $itensRelacionados = $produto->itensInventario()->with('inventario')->get();
+
+        foreach ($itensRelacionados as $item) {
+            if ($item->inventario && $item->inventario->status !== 'finalizado') {
+                return redirect()->route('produtos.index')
+                    ->with('error', 'Produto vinculado a inventário em andamento. Não pode ser excluído.');
+            }
+        }
+
+        // Agora pode excluir com segurança
         $produto->delete();
 
         return redirect()->route('produtos.index')->with('success', 'Produto excluído com sucesso!');

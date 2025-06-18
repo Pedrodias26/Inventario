@@ -69,12 +69,20 @@
             font-size: 16px;
             margin-bottom: 0;
         }
-        .chart-container {
+        .chart-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .chart-box {
+            flex: 1;
+            min-width: 300px;
+            max-width: 48%;
             background: white;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 8px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
         }
         .form-label {
             font-weight: 500;
@@ -153,14 +161,16 @@
         </div>
     @endif
 
-    <div class="chart-container">
-        <h5>📈 Evolução da Diferença de Quantidade</h5>
-        <canvas id="graficoQuantidade"></canvas>
-    </div>
+    <div class="chart-row">
+        <div class="chart-box">
+            <h5>📊 Diferença de Quantidade</h5>
+            <canvas id="graficoQuantidade"></canvas>
+        </div>
 
-    <div class="chart-container">
-        <h5>💰 Evolução da Diferença de Valor (R$)</h5>
-        <canvas id="graficoValor"></canvas>
+        <div class="chart-box">
+            <h5>💰 Diferença de Valor (R$)</h5>
+            <canvas id="graficoValor"></canvas>
+        </div>
     </div>
 
     <div class="text-muted mt-3">
@@ -172,58 +182,53 @@
     const labels = {!! json_encode($labels) !!};
 
     new Chart(document.getElementById('graficoQuantidade'), {
-        type: 'line',
+        type: 'bar',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Diferença de Quantidade',
+                label: 'Qtd',
                 data: {!! json_encode($quantidades) !!},
-                borderColor: 'rgba(25, 135, 84, 1)',
-                backgroundColor: 'rgba(25, 135, 84, 0.2)',
-                tension: 0.3,
-                fill: true,
-                pointRadius: 5
+                backgroundColor: 'rgba(25, 135, 84, 0.7)',
+                borderRadius: 4
             }]
         },
         options: {
             responsive: true,
-            plugins: { tooltip: { mode: 'index', intersect: false } },
-            interaction: { mode: 'nearest', axis: 'x', intersect: false },
-            scales: { y: { beginAtZero: true } }
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { autoSkip: false } },
+                y: { beginAtZero: true }
+            }
         }
     });
 
     new Chart(document.getElementById('graficoValor'), {
-        type: 'line',
+        type: 'bar',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Diferença de Valor (R$)',
+                label: 'Valor (R$)',
                 data: {!! json_encode($valores) !!},
-                borderColor: 'rgba(220, 53, 69, 1)',
-                backgroundColor: 'rgba(220, 53, 69, 0.2)',
-                tension: 0.3,
-                fill: true,
-                pointRadius: 5
+                backgroundColor: 'rgba(220, 53, 69, 0.7)',
+                borderRadius: 4
             }]
         },
         options: {
             responsive: true,
             plugins: {
+                legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        label: function(context) {
-                            return 'R$ ' + parseFloat(context.raw).toFixed(2).replace('.', ',');
-                        }
+                        label: ctx => 'R$ ' + parseFloat(ctx.raw).toFixed(2).replace('.', ',')
                     }
                 }
             },
-            interaction: { mode: 'nearest', axis: 'x', intersect: false },
             scales: {
+                x: { ticks: { autoSkip: false } },
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        callback: value => 'R$ ' + value.toFixed(2).replace('.', ',')
+                        callback: val => 'R$ ' + val.toFixed(2).replace('.', ',')
                     }
                 }
             }

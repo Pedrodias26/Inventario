@@ -16,9 +16,14 @@
                     <input type="text" class="form-control bg-light" value="{{ $inventario->local }}" readonly>
                 </div>
 
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="posicao_vazia" name="posicao_vazia">
+                    <label class="form-check-label" for="posicao_vazia">Posição Vazia</label>
+                </div>
+
                 <div class="mb-3">
                     <label class="form-label"><i class="bi bi-upc-scan me-1"></i>Código EAN</label>
-                    <input type="text" name="EAN" class="form-control" placeholder="Digite ou escaneie o código EAN" required>
+                    <input type="text" name="EAN" class="form-control" placeholder="Digite ou escaneie o código EAN">
                 </div>
 
                 <div class="mb-3">
@@ -33,47 +38,70 @@
 
                 <div class="mb-3">
                     <label class="form-label"><i class="bi bi-123 me-1"></i>Nova Quantidade Contada</label>
-                    <input type="number" id="quantidade_contada" name="quantidade_contada" class="form-control" required>
+                    <input type="number" id="quantidade_contada" name="quantidade_contada" class="form-control">
                 </div>
 
-                <div class="mb-3" id="justificativa_div" style="display: none;">
-                    <label class="form-label text-danger"><i class="bi bi-exclamation-circle me-1"></i>Justificativa de Divergência <small>(obrigatória)</small></label>
-                    <textarea name="justificativa" id="justificativa" class="form-control" rows="3"></textarea>
+                <div class="mb-3">
+                    <label class="form-label"><i class="bi bi-tag me-1"></i>Lote</label>
+                    <input type="text" name="lote" id="lote" class="form-control" placeholder="Ex: L2345">
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label"><i class="bi bi-calendar-check me-1"></i>Validade</label>
-                    <input type="date" name="validade" class="form-control">
+                    <input type="date" name="validade" id="validade" class="form-control" required>
                 </div>
 
                 <div class="d-grid">
-                    <button class="btn btn-success"><i class="bi bi-check-circle me-1"></i>Finalizar Contagem</button>
+                    <button type="submit" class="btn btn-success"><i class="bi bi-check-circle me-1"></i>Finalizar Contagem</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+@if(session('success'))
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div class="toast align-items-center text-white bg-success border-0" role="alert">
+    <div class="toast align-items-center text-white bg-success border-0" role="alert" data-bs-delay="3000" data-bs-autohide="true">
         <div class="d-flex">
             <div class="toast-body">
-                Contagem registrada com sucesso!
+                {{ session('success') }}
             </div>
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
     </div>
 </div>
+@endif
 @endsection
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+@if(session('success'))
 <script>
-    const toastEl = document.querySelector('.toast');
-    if (toastEl) {
-        const toast = new bootstrap.Toast(toastEl);
-        toast.show();
-    }
+    window.addEventListener('DOMContentLoaded', () => {
+        const toastEl = document.querySelector('.toast');
+        if (toastEl) {
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+    });
+</script>
+@endif
+
+<script>
+    document.getElementById('posicao_vazia').addEventListener('change', function () {
+        const disabled = this.checked;
+
+        ['EAN', 'descricao_produto', 'quantidade_esperada', 'quantidade_contada', 'lote'].forEach(id => {
+            const el = document.getElementsByName(id)[0] || document.getElementById(id);
+            if (el) {
+                el.disabled = disabled;
+                if (disabled) el.value = '';
+            }
+        });
+
+        document.getElementById('validade').required = !disabled;
+    });
 
     document.querySelector('input[name="EAN"]').addEventListener('change', function () {
         const ean = this.value;
@@ -91,23 +119,6 @@
                 document.getElementById('descricao_produto').value = 'Produto não encontrado';
                 document.getElementById('quantidade_esperada').value = 0;
             });
-    });
-
-    // Lógica para exibir justificativa se houver divergência
-    document.getElementById('quantidade_contada').addEventListener('input', function () {
-        const esperada = parseFloat(document.getElementById('quantidade_esperada').value);
-        const contada = parseFloat(this.value);
-        const justificativaDiv = document.getElementById('justificativa_div');
-        const justificativaInput = document.getElementById('justificativa');
-
-        if (!isNaN(contada) && contada !== esperada) {
-            justificativaDiv.style.display = 'block';
-            justificativaInput.setAttribute('required', 'required');
-        } else {
-            justificativaDiv.style.display = 'none';
-            justificativaInput.removeAttribute('required');
-            justificativaInput.value = '';
-        }
     });
 </script>
 @endpush

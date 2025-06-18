@@ -19,6 +19,7 @@ class ItemInventario extends Model
         'status',
         'valor_unitario',
         'justificativa',
+        'lote',
     ];
 
     public function produto()

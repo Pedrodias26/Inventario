@@ -70,6 +70,18 @@
             background-color: #343a40;
             color: #ffffff !important;
         }
+
+        /* Oculta a sidebar em dispositivos móveis */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .content {
+                margin-left: 0 !important;
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 <body>

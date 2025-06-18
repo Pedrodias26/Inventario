@@ -11,12 +11,17 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <a href="{{ route('itens-inventario.create', $inventario->id) }}" class="btn btn-success mb-3">Contar Produto</a>
+    <a href="{{ route('itens-inventario.create', $inventario->id) }}" class="btn btn-success mb-3">
+        Contar Produto
+    </a>
 
+    {{-- Botão de lançamento --}}
     @if($inventario->itens->where('status', 'contado')->count() > 0 && $inventario->status === 'em_contagem')
         <form action="{{ route('inventario.lancar', $inventario->id) }}" method="POST" class="mb-3">
             @csrf
-            <button type="submit" class="btn btn-primary">Lançar Inventário</button>
+            <button type="submit" class="btn btn-primary">
+                Lançar Inventário (Atualizar Estoque)
+            </button>
         </form>
     @endif
 
@@ -46,16 +51,16 @@
             <tbody>
                 @forelse($inventario->itens as $item)
                     <tr>
-                        <td>{{ $item->produto->codigo_interno }}</td>
-                        <td>{{ $item->produto->EAN }}</td>
-                        <td>{{ $item->produto->nome }}</td>
-                        <td>{{ $item->produto->local_armazenamento }}</td>
+                        <td>{{ $item->produto->codigo_interno ?? '—' }}</td>
+                        <td>{{ $item->produto->EAN ?? '—' }}</td>
+                        <td>{{ $item->produto->nome ?? 'Posição vazia' }}</td>
+                        <td>{{ $item->produto->local_armazenamento ?? $item->local_contagem }}</td>
                         <td>{{ $item->quantidade_contada }}</td>
                         <td>{{ $item->diferenca }}</td>
-                        <td>{{ $item->validade }}</td>
-                        <td>R$ {{ number_format($item->valor_unitario, 2, ',', '.') }}</td>
+                        <td>{{ $item->validade ?? '—' }}</td>
+                        <td>R$ {{ number_format($item->valor_unitario ?? 0, 2, ',', '.') }}</td>
                         <td class="{{ $item->diferenca < 0 ? 'text-danger' : 'text-success' }}">
-                            R$ {{ number_format($item->diferenca * $item->valor_unitario, 2, ',', '.') }}
+                            R$ {{ number_format(($item->diferenca ?? 0) * ($item->valor_unitario ?? 0), 2, ',', '.') }}
                         </td>
                         <td>{{ ucfirst($item->status) }}</td>
                     </tr>

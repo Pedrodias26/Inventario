@@ -19,6 +19,15 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            $user = Auth::user();
+
+            // Redirecionamento por role
+            if ($user->role === 'auditor') {
+                return redirect()->route('auditor.inventario');
+            }
+
             return redirect()->route('home');
         }
 
@@ -42,6 +51,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'usuario', // define role padrão, se quiser personalizar, altere aqui
         ]);
 
         return redirect()->route('login')->with('success', 'Usuário cadastrado com sucesso!');
@@ -50,6 +60,10 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect('/login');
     }
 }

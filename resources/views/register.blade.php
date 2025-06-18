@@ -3,15 +3,18 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Cadastro - Estoque</title>
+    <title>Cadastro - Sistema de Logística</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         * {
             box-sizing: border-box;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('{{ asset("images/bg-login.jpg") }}') no-repeat center center fixed;
+            background-size: cover;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -19,94 +22,112 @@
             margin: 0;
         }
 
-        .container {
-            background-color: #fff;
+        .register-box {
+            background-color: rgba(33, 37, 41, 0.95);
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            width: 350px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+            width: 370px;
+            color: #fff;
         }
 
-        h2 {
+        .register-box h2 {
             text-align: center;
             margin-bottom: 25px;
-            color: #333;
+            color: #ffc107;
+            font-weight: 600;
+            font-size: 24px;
         }
 
-        input {
+        .register-box input {
             width: 100%;
             padding: 12px;
             margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
             border: none;
             border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
+            background-color: #f8f9fa;
+            color: #212529;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        .register-box input::placeholder {
+            color: #6c757d;
+        }
+
+        .register-box button {
+            width: 100%;
+            padding: 12px;
+            background-color: #ffc107;
+            color: #212529;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .register-box button:hover {
+            background-color: #e0a800;
         }
 
         .error {
             background-color: #f8d7da;
             color: #721c24;
             padding: 10px;
-            margin-bottom: 20px;
             border-radius: 5px;
+            margin-bottom: 20px;
         }
 
         .link {
             text-align: center;
             margin-top: 15px;
+            color: #adb5bd;
         }
 
         .link a {
-            color: #28a745;
+            color: #ffc107;
             text-decoration: none;
         }
 
         .link a:hover {
             text-decoration: underline;
         }
+
+        .icon-container {
+            text-align: center;
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #ffc107;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h2>Cadastrar Usuário</h2>
+    <div class="register-box">
+        <div class="icon-container">
+            <i class="fas fa-user-plus"></i>
+        </div>
+
+        <h2>Criar Conta</h2>
 
         @if ($errors->any())
-        <div class="error">
-            @foreach ($errors->all() as $error)
-            <p>{{ $error }}</p>
-            @endforeach
-        </div>
+            <div class="error">
+                @foreach ($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
         @endif
 
-        <form method="POST" action="/register">
+        <form method="POST" action="{{ route('register') }}">
             @csrf
-            <input type="text" name="name" placeholder="Nome" required>
-            <input type="email" name="email" placeholder="E-mail" required>
+            <input type="text" name="name" placeholder="Nome completo" required>
+            <input type="email" name="email" placeholder="E-mail corporativo" required>
             <input type="password" name="password" placeholder="Senha" required>
-            <input type="password" name="password_confirmation" placeholder="Confirmar Senha" required>
-            <button type="submit">Cadastrar</button>
-            <button class="btn btn-primary">
-                <span class="spinner-border spinner-border-sm"></span>
-                Loading..
-            </button>
+            <input type="password" name="password_confirmation" placeholder="Confirmar senha" required>
+            <button type="submit"><i class="fas fa-user-check"></i> Cadastrar</button>
         </form>
 
         <div class="link">
-            <p>Já tem conta? <a href="{{ route('login') }}">Entrar</a></p>
+            <p>Já possui login? <a href="{{ route('login') }}">Entrar</a></p>
         </div>
     </div>
 </body>

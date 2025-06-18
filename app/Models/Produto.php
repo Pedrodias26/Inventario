@@ -7,18 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Produto extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'codigo_interno',
         'nome',
+        'EAN',
         'descricao',
         'quantidade',
         'local_armazenamento',
         'lote',
         'validade',
         'status',
-        'EAN',
         'valor_unitario',
+        'codigo_interno',
     ];
+
+    public function itensInventario()
+    {
+        return $this->hasMany(\App\Models\ItemInventario::class, 'produto_id');
+    }
 }

@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ItemInventario;
+use App\Models\HistoricoContagem;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class RelatorioController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ItemInventario::with(['inventario', 'produto']);
+        $query = HistoricoContagem::with(['produto']);
 
         if ($request->filled('produto')) {
             $query->whereHas('produto', function ($q) use ($request) {
@@ -19,17 +19,17 @@ class RelatorioController extends Controller
         }
 
         if ($request->filled('data_inicio') && $request->filled('data_fim')) {
-            $query->whereBetween('created_at', [$request->data_inicio, $request->data_fim]);
+            $query->whereBetween('registrado_em', [$request->data_inicio, $request->data_fim]);
         }
 
-        $itens = $query->orderBy('created_at', 'desc')->paginate(20);
+        $historicos = $query->orderBy('registrado_em', 'desc')->paginate(20);
 
-        return view('relatorio.index', compact('itens'));
+        return view('relatorio.index', compact('historicos'));
     }
 
     public function exportarPdf(Request $request)
     {
-        $query = ItemInventario::with(['inventario', 'produto']);
+        $query = HistoricoContagem::with(['produto']);
 
         if ($request->filled('produto')) {
             $query->whereHas('produto', function ($q) use ($request) {
@@ -38,12 +38,12 @@ class RelatorioController extends Controller
         }
 
         if ($request->filled('data_inicio') && $request->filled('data_fim')) {
-            $query->whereBetween('created_at', [$request->data_inicio, $request->data_fim]);
+            $query->whereBetween('registrado_em', [$request->data_inicio, $request->data_fim]);
         }
 
-        $itens = $query->get();
+        $historicos = $query->orderBy('registrado_em', 'desc')->get();
 
-        $pdf = Pdf::loadView('relatorio.pdf', compact('itens'));
+        $pdf = Pdf::loadView('relatorio.pdf', compact('historicos'));
         return $pdf->download('relatorio-inventario.pdf');
     }
 }

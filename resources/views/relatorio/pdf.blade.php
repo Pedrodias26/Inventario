@@ -52,6 +52,7 @@
         <thead>
             <tr>
                 <th>Produto</th>
+                <th>EAN</th>
                 <th>Contado</th>
                 <th>Esperado</th>
                 <th>Diferença</th>
@@ -60,21 +61,21 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($itens as $item)
-            @php
-                $esperado = $item->produto->quantidade ?? 0;
-                $diferenca = $item->quantidade_contada - $esperado;
-            @endphp
-            <tr @if($diferenca !== 0) class="diferenca" @endif>
-                <td>{{ $item->produto->nome }}</td>
-                <td>{{ $item->quantidade_contada }}</td>
-                <td>{{ $esperado }}</td>
-                <td>{{ $diferenca }}</td>
-                <td>{{ $item->created_at->format('d/m/Y') }}</td>
-                <td class="justificativa">
-                    {{ $item->justificativa ?? '—' }}
-                </td>
-            </tr>
+            @foreach($historicos as $historico)
+                @php
+                    $produto = $historico->produto;
+                    $esperado = $historico->quantidade_esperada ?? 0;
+                    $diferenca = $historico->quantidade_contada - $esperado;
+                @endphp
+                <tr @if($diferenca !== 0) class="diferenca" @endif>
+                    <td>{{ $produto->nome ?? 'Produto removido' }}</td>
+                    <td>{{ $produto->EAN ?? '—' }}</td>
+                    <td>{{ $historico->quantidade_contada }}</td>
+                    <td>{{ $esperado }}</td>
+                    <td>{{ $diferenca }}</td>
+                    <td>{{ \Carbon\Carbon::parse($historico->registrado_em)->format('d/m/Y H:i') }}</td>
+                    <td class="justificativa">{{ $historico->justificativa ?? '—' }}</td>
+                </tr>
             @endforeach
         </tbody>
     </table>

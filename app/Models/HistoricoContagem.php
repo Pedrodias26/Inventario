@@ -21,6 +21,7 @@ class HistoricoContagem extends Model
         'validade',
         'justificativa',
         'registrado_em',
+        'empresa_id', // incluído para multiempresa
     ];
 
     /**
@@ -37,12 +38,20 @@ class HistoricoContagem extends Model
     public function produto(): HasOneThrough
     {
         return $this->hasOneThrough(
-            Produto::class,             // Tabela de destino
-            ItemInventario::class,      // Tabela intermediária
-            'id',                       // Chave primária do intermediário (ItemInventario)
-            'id',                       // Chave primária da tabela de destino (Produto)
-            'item_inventario_id',       // Chave estrangeira local
-            'produto_id'                // Chave estrangeira no intermediário
+            Produto::class,             // Model de destino
+            ItemInventario::class,      // Model intermediário
+            'id',                       // PK em ItemInventario
+            'id',                       // PK em Produto
+            'item_inventario_id',       // FK neste model
+            'produto_id'                // FK em ItemInventario
         );
+    }
+
+    /**
+     * Relacionamento com a empresa.
+     */
+    public function empresa(): BelongsTo
+    {
+        return $this->belongsTo(Empresa::class);
     }
 }

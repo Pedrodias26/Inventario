@@ -47,6 +47,12 @@
                         </td>
                     </tr>
                 @endforeach
+
+                @if($usuarios->isEmpty())
+                    <tr>
+                        <td colspan="4" class="text-muted">Nenhum usuário encontrado para sua empresa.</td>
+                    </tr>
+                @endif
             </tbody>
         </table>
     </div>

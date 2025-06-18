@@ -8,11 +8,14 @@ use Illuminate\Http\Request;
 class UsuarioController extends Controller
 {
     /**
-     * Exibe a lista de usuários.
+     * Exibe a lista de usuários da empresa logada.
      */
     public function index()
     {
-        $usuarios = User::all();
+        $empresaId = session('empresa_id');
+
+        $usuarios = User::where('empresa_id', $empresaId)->get();
+
         return view('usuarios.index', compact('usuarios'));
     }
 
@@ -21,7 +24,10 @@ class UsuarioController extends Controller
      */
     public function edit($id)
     {
-        $usuario = User::findOrFail($id);
+        $empresaId = session('empresa_id');
+
+        $usuario = User::where('empresa_id', $empresaId)->findOrFail($id);
+
         return view('usuarios.edit', compact('usuario'));
     }
 
@@ -30,7 +36,9 @@ class UsuarioController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $usuario = User::findOrFail($id);
+        $empresaId = session('empresa_id');
+
+        $usuario = User::where('empresa_id', $empresaId)->findOrFail($id);
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -48,11 +56,14 @@ class UsuarioController extends Controller
     }
 
     /**
-     * Remove um usuário.
+     * Remove um usuário da empresa.
      */
     public function destroy($id)
     {
-        $usuario = User::findOrFail($id);
+        $empresaId = session('empresa_id');
+
+        $usuario = User::where('empresa_id', $empresaId)->findOrFail($id);
+
         $usuario->delete();
 
         return redirect()->route('GerenciamentoUsuario')->with('success', 'Usuário excluído com sucesso.');

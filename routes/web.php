@@ -8,6 +8,7 @@ use App\Http\Controllers\ItemInventarioController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RelatorioController;
+use App\Http\Controllers\EmpresaController;
 use App\Models\Produto;
 
 // ROTA PÚBLICA: Redireciona para login
@@ -19,6 +20,10 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// ✅ ROTAS PÚBLICAS PARA CADASTRO DE EMPRESA (sem login)
+Route::get('/empresa/cadastrar', [EmpresaController::class, 'create'])->name('empresa.create');
+Route::post('/empresa/salvar', [EmpresaController::class, 'store'])->name('empresa.store');
 
 // ROTAS PROTEGIDAS (Necessita estar autenticado)
 Route::middleware(['auth'])->group(function () {

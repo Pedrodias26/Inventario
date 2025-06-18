@@ -13,7 +13,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     * Os atributos que podem ser atribuídos em massa.
      *
      * @var array<int, string>
      */
@@ -21,11 +21,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role', 
+        'role',
+        'empresa_id', // incluído
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Os atributos que devem ser ocultados na serialização.
      *
      * @var array<int, string>
      */
@@ -35,7 +36,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast.
+     * Os atributos que devem ser convertidos de tipo.
      *
      * @var array<string, string>
      */
@@ -43,4 +44,12 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Relacionamento com a empresa.
+     */
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class);
+    }
 }

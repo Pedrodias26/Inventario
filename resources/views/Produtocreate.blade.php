@@ -24,6 +24,10 @@
 
 <form action="{{ route('produtos.store') }}" method="POST">
     @csrf
+
+    {{-- Campo oculto com empresa_id --}}
+    <input type="hidden" name="empresa_id" value="{{ session('empresa_id') }}">
+
     <div class="row g-3">
         <div class="col-md-6">
             <label class="form-label">Nome</label>

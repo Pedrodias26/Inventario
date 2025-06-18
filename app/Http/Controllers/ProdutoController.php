@@ -9,7 +9,10 @@ class ProdutoController extends Controller
 {
     public function index()
     {
-        $produtos = Produto::all();
+        $empresaId = session('empresa_id');
+
+        $produtos = Produto::where('empresa_id', $empresaId)->get();
+
         return view('Relatorioproduto', compact('produtos'));
     }
 
@@ -20,6 +23,8 @@ class ProdutoController extends Controller
 
     public function store(Request $request)
     {
+        $empresaId = session('empresa_id');
+
         $request->validate([
             'nome' => 'required|string|max:255',
             'EAN' => 'required|integer',
@@ -42,9 +47,9 @@ class ProdutoController extends Controller
             'validade' => $request->validade,
             'status' => $request->status,
             'valor_unitario' => $request->valor_unitario,
+            'empresa_id' => $empresaId,
         ]);
 
-        // Geração do código interno com 5 dígitos
         $produto->codigo_interno = str_pad($produto->id, 5, '0', STR_PAD_LEFT);
         $produto->save();
 
@@ -54,11 +59,22 @@ class ProdutoController extends Controller
     public function edit($id)
     {
         $produto = Produto::findOrFail($id);
+
+        if ($produto->empresa_id !== session('empresa_id')) {
+            abort(403, 'Acesso negado.');
+        }
+
         return view('produtos.edit', compact('produto'));
     }
 
     public function update(Request $request, $id)
     {
+        $produto = Produto::findOrFail($id);
+
+        if ($produto->empresa_id !== session('empresa_id')) {
+            abort(403, 'Acesso negado.');
+        }
+
         $request->validate([
             'nome' => 'required|string|max:255',
             'EAN' => 'required|integer',
@@ -71,7 +87,6 @@ class ProdutoController extends Controller
             'valor_unitario' => 'required|numeric',
         ]);
 
-        $produto = Produto::findOrFail($id);
         $produto->update($request->all());
 
         return redirect()->route('produtos.index')->with('success', 'Produto atualizado com sucesso!');
@@ -81,7 +96,10 @@ class ProdutoController extends Controller
     {
         $produto = Produto::findOrFail($id);
 
-        // Verifica se há vínculos com itens de inventário
+        if ($produto->empresa_id !== session('empresa_id')) {
+            abort(403, 'Acesso negado.');
+        }
+
         $itensRelacionados = $produto->itensInventario()->with('inventario')->get();
 
         foreach ($itensRelacionados as $item) {
@@ -91,7 +109,6 @@ class ProdutoController extends Controller
             }
         }
 
-        // Agora pode excluir com segurança
         $produto->delete();
 
         return redirect()->route('produtos.index')->with('success', 'Produto excluído com sucesso!');

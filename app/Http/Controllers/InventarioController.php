@@ -10,24 +10,29 @@ class InventarioController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Inventario::with('itens.produto');
+        $empresaId = session('empresa_id');
 
-        // Filtro por local
+        $query = Inventario::with('itens.produto')
+            ->where('empresa_id', $empresaId);
+
         if ($request->filled('local')) {
             $query->where('local', 'like', '%' . $request->local . '%');
         }
 
         $inventarios = $query->orderBy('id', 'desc')->get();
 
-        // Locais únicos (para sugestões futuras)
-        $locais = Inventario::select('local')->distinct()->pluck('local');
+        $locais = Inventario::where('empresa_id', $empresaId)
+            ->select('local')->distinct()->pluck('local');
 
         return view('inventario.index', compact('inventarios', 'locais'));
     }
 
     public function create()
     {
-        $locais = Produto::select('local_armazenamento')
+        $empresaId = session('empresa_id');
+
+        $locais = Produto::where('empresa_id', $empresaId)
+            ->select('local_armazenamento')
             ->distinct()
             ->whereNotNull('local_armazenamento')
             ->pluck('local_armazenamento');
@@ -44,6 +49,7 @@ class InventarioController extends Controller
         Inventario::create([
             'local' => $request->local,
             'status' => 'em_contagem',
+            'empresa_id' => session('empresa_id'),
         ]);
 
         return redirect()->route('inventario.index')->with('success', 'Inventário criado com sucesso.');
@@ -51,18 +57,32 @@ class InventarioController extends Controller
 
     public function show(Inventario $inventario)
     {
+        if ($inventario->empresa_id !== session('empresa_id')) {
+            abort(403, 'Acesso negado.');
+        }
+
         $inventario->load('itens.produto');
+
         return view('inventario.show', compact('inventario'));
     }
 
     public function destroy(Inventario $inventario)
     {
+        if ($inventario->empresa_id !== session('empresa_id')) {
+            abort(403, 'Acesso negado.');
+        }
+
         $inventario->delete();
+
         return redirect()->route('inventario.index')->with('success', 'Inventário excluído.');
     }
 
     public function lancar(Inventario $inventario)
     {
+        if ($inventario->empresa_id !== session('empresa_id')) {
+            abort(403, 'Acesso negado.');
+        }
+
         $itens = $inventario->itens()->where('status', 'contado')->get();
 
         if ($itens->isEmpty()) {
@@ -71,6 +91,8 @@ class InventarioController extends Controller
 
         foreach ($itens as $item) {
             $produto = $item->produto;
+
+            // Atualiza dados do produto com os valores do item contado
             $produto->quantidade = $item->quantidade_contada;
             $produto->local_armazenamento = $item->local_contagem;
             $produto->lote = $item->lote;

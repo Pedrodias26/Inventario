@@ -10,7 +10,10 @@ class RelatorioController extends Controller
 {
     public function index(Request $request)
     {
-        $query = HistoricoContagem::with(['produto']);
+        $empresaId = session('empresa_id');
+
+        $query = HistoricoContagem::with('produto')
+            ->where('empresa_id', $empresaId);
 
         if ($request->filled('produto')) {
             $query->whereHas('produto', function ($q) use ($request) {
@@ -29,7 +32,10 @@ class RelatorioController extends Controller
 
     public function exportarPdf(Request $request)
     {
-        $query = HistoricoContagem::with(['produto']);
+        $empresaId = session('empresa_id');
+
+        $query = HistoricoContagem::with('produto')
+            ->where('empresa_id', $empresaId);
 
         if ($request->filled('produto')) {
             $query->whereHas('produto', function ($q) use ($request) {

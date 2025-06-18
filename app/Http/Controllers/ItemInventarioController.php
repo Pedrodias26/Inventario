@@ -9,11 +9,20 @@ class ItemInventarioController extends Controller
 {
     public function create(Inventario $inventario)
     {
+        if ($inventario->empresa_id !== session('empresa_id')) {
+            abort(403, 'Acesso negado.');
+        }
+
         return view('itens_inventario.create', compact('inventario'));
     }
 
     public function store(Request $request, Inventario $inventario)
     {
+        if ($inventario->empresa_id !== session('empresa_id')) {
+            abort(403, 'Acesso negado.');
+        }
+
+        $empresaId = session('empresa_id');
         $posicaoVazia = $request->has('posicao_vazia');
 
         $rules = [
@@ -31,13 +40,14 @@ class ItemInventarioController extends Controller
 
         $request->validate($rules);
 
-        // Remove item anterior da mesma posição
         ItemInventario::where('inventario_id', $inventario->id)
             ->where('local_contagem', $inventario->local)
             ->delete();
 
         if ($posicaoVazia) {
-            $produto = Produto::where('local_armazenamento', $inventario->local)->first();
+            $produto = Produto::where('empresa_id', $empresaId)
+                ->where('local_armazenamento', $inventario->local)
+                ->first();
 
             if ($produto) {
                 $quantidadeEsperada = $produto->quantidade;
@@ -53,6 +63,7 @@ class ItemInventarioController extends Controller
                     'valor_unitario' => $produto->valor_unitario,
                     'justificativa' => 'Produto removido da posição',
                     'lote' => null,
+                    'empresa_id' => $empresaId,
                 ]);
 
                 HistoricoContagem::create([
@@ -63,6 +74,8 @@ class ItemInventarioController extends Controller
                     'lote' => null,
                     'validade' => $request->validade,
                     'justificativa' => 'Produto removido da posição',
+                    'empresa_id' => $empresaId,
+                    'registrado_em' => now(),
                 ]);
             } else {
                 $item = ItemInventario::create([
@@ -76,10 +89,13 @@ class ItemInventarioController extends Controller
                     'valor_unitario' => 0,
                     'justificativa' => 'Posição vazia sem produto',
                     'lote' => null,
+                    'empresa_id' => $empresaId,
                 ]);
             }
         } else {
-            $produto = Produto::where('EAN', $request->EAN)->first();
+            $produto = Produto::where('empresa_id', $empresaId)
+                ->where('EAN', $request->EAN)
+                ->first();
 
             if (!$produto) {
                 return back()->withInput()->with('error', 'Produto com EAN informado não foi encontrado.');
@@ -100,6 +116,7 @@ class ItemInventarioController extends Controller
                 'valor_unitario' => $produto->valor_unitario,
                 'justificativa' => null,
                 'lote' => $request->lote,
+                'empresa_id' => $empresaId,
             ]);
 
             HistoricoContagem::create([
@@ -110,6 +127,8 @@ class ItemInventarioController extends Controller
                 'lote' => $request->lote,
                 'validade' => $request->validade,
                 'justificativa' => null,
+                'empresa_id' => $empresaId,
+                'registrado_em' => now(),
             ]);
         }
 
@@ -131,7 +150,10 @@ class ItemInventarioController extends Controller
             return redirect()->route('home');
         }
 
-        $inventario = Inventario::where('status', 'em_contagem')
+        $empresaId = session('empresa_id');
+
+        $inventario = Inventario::where('empresa_id', $empresaId)
+            ->where('status', 'em_contagem')
             ->orderBy('id')
             ->first();
 
@@ -142,11 +164,13 @@ class ItemInventarioController extends Controller
 
     public function lancarInventario($id)
     {
-        $inventario = Inventario::with('itens')->findOrFail($id);
+        $empresaId = session('empresa_id');
+
+        $inventario = Inventario::with('itens')->where('empresa_id', $empresaId)->findOrFail($id);
 
         foreach ($inventario->itens as $item) {
             if ($item->produto_id && $item->status === 'contado') {
-                $produto = Produto::find($item->produto_id);
+                $produto = Produto::where('empresa_id', $empresaId)->find($item->produto_id);
                 if ($produto) {
                     $produto->quantidade = $item->quantidade_contada;
                     $produto->validade = $item->validade;
@@ -167,7 +191,9 @@ class ItemInventarioController extends Controller
 
     public function cancelar($id)
     {
-        $item = ItemInventario::findOrFail($id);
+        $empresaId = session('empresa_id');
+
+        $item = ItemInventario::where('empresa_id', $empresaId)->findOrFail($id);
         $item->status = 'cancelado';
         $item->save();
 
